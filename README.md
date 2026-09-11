@@ -12,11 +12,9 @@ Data Augmentation (Varietà dei dati): Durante l'addestsramento, le immagini ven
 zioni, ribaltamenti, variazioni di luminosità). Questo evita che il modello impari i dati a memoria (*overfitting*) e lo rende più robusto rispetto a foto storte, scure o con diverse angolazioni.
 
 Analisi di Spiegabilità e Robustezza: Ispezione delle aree decisionali tramite mappe Grad-CAM e valutazione del degrado dell'accuratezza sotto compressione JPEG progressiva.
----
 
 ## Struttura del Progetto
 
-```text
 tesi_satellitare/
 ├── checkpoints/                        # Pesi dei modelli e checkpoint addestrati
 │   ├── .cache/                         # Cache locale dei modelli
@@ -32,6 +30,7 @@ tesi_satellitare/
 │   ├── real/                           # Immagini reali da fMoW
 │   └── spacenet_real/                  # Immagini reali da SpaceNet
 ├── reports/                            # Output delle valutazioni (matrici, Grad-CAM, grafici JPEG)
+│   └── predictions/                    # Output visivi generati dall'inferenza su singola immagine
 ├── src/                                # Script sorgente di elaborazione ed esecuzione
 │   ├── convert_to_png.py               # Conversione e uniformazione delle immagini in formato PNG
 │   ├── convert_to_safetensors.py       # Conversione pesi in formato SafeTensors
@@ -41,6 +40,7 @@ tesi_satellitare/
 │   ├── generate_dataset.py             # Generazione immagini sintetiche con DiffusionSat
 │   ├── generate_dataset2.py            # Pipeline alternativa/estesa di generazione dati
 │   ├── generate_test.py                # Script rapido per test di generazione singola
+│   ├── predict_single_image.py         # Inferenza e classificazione binaria su singola immagine
 │   ├── test_unseen_heldout.py          # Valutazione finale su dati non visti (held-out test set)
 │   └── train_all_experiments.py        # Pipeline di addestramento ResNet-50 per i 5 scenari
 ├── README.md                           # Documentazione del repository
@@ -74,3 +74,6 @@ python3 src/evaluate_all_experiments.py
 
 # Test finale su campioni non utilizzati
 python3 src/test_unseen_heldout.py
+
+4. Classificazione singola immagine
+python3 src/predict_single_image.py percorso_immagine
