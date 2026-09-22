@@ -46,24 +46,24 @@ tesi_satellitare/
 ├── README.md                           # Documentazione del repository
 └── requirements.txt                    # Dipendenze e librerie Python richieste
 
-Installazione: 
+# Installazione: 
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 
-Utilizzo:
+# Utilizzo:
 
 1. Preparazione del Dataset
-# Scarica le immagini reali 
+    Scarica le immagini reali 
 python3 src/download_real_dataset.py
 python3 src/download_spacenet.py
 python3 src/convert_to_png.py
 
-# Genera le immagini fake con DiffusionSat
+ Genera le immagini fake con DiffusionSat
 python3 src/generate_dataset.py
 python3 src/generate_dataset2.py
 
-# Per testare una singola generazione rapida:
+ Per testare una singola generazione rapida:
 python3 src/generate_test.py
 
 2. Addestramento modello:
