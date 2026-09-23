@@ -178,11 +178,36 @@ for exp_name, (n_fmow, n_spacenet) in EXPERIMENTS.items():
     plt.savefig(os.path.join(report_dir, "gradcam.png"), bbox_inches='tight')
     plt.close()
 
-    # --- 3. STRESS TEST ALLA COMPRESSIONE JPEG ---
+# --- 3. STRESS TEST ALLA COMPRESSIONE JPEG & SALVATAGGIO ESEMPI ---
     qualities = [100, 90, 70, 50, 30, 10]
     q_accs = []
     val_samples = list(zip(val_paths, val_labels))
     
+    # Scegliamo un'immagine di esempio casuale dal validation set per mostrare le degradazioni
+    random.seed()
+    sample_path, sample_label = random.choice(val_samples)
+    sample_img_pil = Image.open(sample_path).convert("RGB")
+    
+    fig_deg, axes_deg = plt.subplots(1, len(qualities), figsize=(15, 3))
+    
+    for idx, q in enumerate(qualities):
+        c_img = apply_jpeg_compression(sample_img_pil, q) if q < 100 else sample_img_pil
+        
+        # Salva specificamente l'immagine a Q=30 richiesta dal professore
+        if q == 30:
+            c_img.save(os.path.join(report_dir, "example_Q30.png"))
+            print(f"Immagine di esempio a Q=30 salvata in: {report_dir}/example_Q30.png")
+            
+        # Aggiunge l'immagine alla griglia di confronto visivo delle 5 degradazioni
+        axes_deg[idx].imshow(c_img)
+        axes_deg[idx].axis('off')
+        axes_deg[idx].set_title(f"Q = {q}" if q < 100 else "Original", fontsize=9)
+        
+    plt.suptitle(f"Confronto Degradazione JPEG ({exp_name})", fontsize=11)
+    plt.savefig(os.path.join(report_dir, "jpeg_degradations_grid.png"), bbox_inches='tight')
+    plt.close()
+
+    # --- SECONDA PARTE: Esecuzione dello stress test numerico su tutto il validation set ---
     for q in tqdm(qualities, desc=f"JPEG Test [{exp_name}]"):
         qp, ql = [], []
         for path, label in val_samples:
