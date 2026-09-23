@@ -179,31 +179,49 @@ for exp_name, (n_fmow, n_spacenet) in EXPERIMENTS.items():
     plt.close()
 
 # --- 3. STRESS TEST ALLA COMPRESSIONE JPEG & SALVATAGGIO ESEMPI ---
+experiment_names = ['spacenet_100', 'mixed_75_25', 'mixed_50_50', 'mixed_25_75', 'fmow_100']
+
+for exp_name in experiment_names:
+    print(f"\n--- Elaborazione configurazione: {exp_name} ---")
+    
+    # Cartella di output specifica per l'esperimento corrente
+    report_dir = os.path.join("reports", exp_name)
+    os.makedirs(report_dir, exist_ok=True)
+    
     qualities = [100, 90, 70, 50, 30, 10]
     q_accs = []
     val_samples = list(zip(val_paths, val_labels))
-    
+
     # Scegliamo un'immagine di esempio casuale dal validation set per mostrare le degradazioni
     random.seed()
     sample_path, sample_label = random.choice(val_samples)
     sample_img_pil = Image.open(sample_path).convert("RGB")
-    
-    fig_deg, axes_deg = plt.subplots(1, len(qualities), figsize=(15, 3))
-    
-    for idx, q in enumerate(qualities):
+
+    # Usiamo ESCLUSIVAMENTE questi 3 valori per la griglia visiva a 3 colonne
+    visual_qualities = [100, 30, 10]
+    fig_deg, axes_deg = plt.subplots(1, len(visual_qualities), figsize=(10, 3.5))
+
+    for idx, q in enumerate(visual_qualities):
         c_img = apply_jpeg_compression(sample_img_pil, q) if q < 100 else sample_img_pil
         
-        # Salva specificamente l'immagine a Q=30 richiesta dal professore
+        # Salva specificamente l'immagine a Q=30 per la tesi
         if q == 30:
             c_img.save(os.path.join(report_dir, "example_Q30.png"))
             print(f"Immagine di esempio a Q=30 salvata in: {report_dir}/example_Q30.png")
             
-        # Aggiunge l'immagine alla griglia di confronto visivo delle 5 degradazioni
+        # Salva specificamente anche l'immagine a Q=10
+        if q == 10:
+            c_img.save(os.path.join(report_dir, "example_Q10.png"))
+            print(f"Immagine di esempio a Q=10 salvata in: {report_dir}/example_Q10.png")
+
+        # Riempie solo i 3 subplot dedicati della griglia
         axes_deg[idx].imshow(c_img)
         axes_deg[idx].axis('off')
-        axes_deg[idx].set_title(f"Q = {q}" if q < 100 else "Original", fontsize=9)
-        
-    plt.suptitle(f"Confronto Degradazione JPEG ({exp_name})", fontsize=11)
+        title_text = f"Q = {q}" if q < 100 else "Original (Q = 100)"
+        axes_deg[idx].set_title(title_text, fontsize=10)
+
+    plt.suptitle(f"Confronto Soglie di Degradazione JPEG ({exp_name})", fontsize=11)
+    plt.tight_layout()
     plt.savefig(os.path.join(report_dir, "jpeg_degradations_grid.png"), bbox_inches='tight')
     plt.close()
 
@@ -219,6 +237,7 @@ for exp_name, (n_fmow, n_spacenet) in EXPERIMENTS.items():
             ql.append(label)
         q_accs.append(accuracy_score(ql, qp) * 100)
 
+    # Plot del grafico di decadimento prestazionale
     plt.figure(figsize=(7, 4))
     plt.plot(qualities, q_accs, marker='o', linewidth=2, color='#2b83ba')
     plt.title(f"JPEG Robustness ({exp_name})")
@@ -227,10 +246,10 @@ for exp_name, (n_fmow, n_spacenet) in EXPERIMENTS.items():
     plt.ylim([0, 105])
     plt.gca().invert_xaxis()
     plt.grid(True, linestyle='--', alpha=0.6)
-    
+
     for idx_q, acc_val in enumerate(q_accs):
         plt.annotate(f"{acc_val:.1f}%", (qualities[idx_q], acc_val + 3), ha='center', fontsize=8)
-        
+
     plt.savefig(os.path.join(report_dir, "jpeg_stress_test.png"), bbox_inches='tight')
     plt.close()
 
