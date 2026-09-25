@@ -195,7 +195,7 @@ for exp_name, (n_fmow, n_spacenet) in EXPERIMENTS.items():
     for idx, q in enumerate(visual_qualities):
         c_img = apply_jpeg_compression(sample_img_pil, q) if q < 100 else sample_img_pil
         
-        # Salva specificamente l'immagine a Q=30 per la tesi
+        # Salva specificamente l'immagine a Q=30
         if q == 30:
             c_img.save(os.path.join(report_dir, "example_Q30.png"))
             print(f"Immagine di esempio a Q=30 salvata in: {report_dir}/example_Q30.png")
