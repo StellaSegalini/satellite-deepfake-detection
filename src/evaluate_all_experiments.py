@@ -179,15 +179,6 @@ for exp_name, (n_fmow, n_spacenet) in EXPERIMENTS.items():
     plt.close()
 
 # --- 3. STRESS TEST ALLA COMPRESSIONE JPEG & SALVATAGGIO ESEMPI ---
-experiment_names = ['spacenet_100', 'mixed_75_25', 'mixed_50_50', 'mixed_25_75', 'fmow_100']
-
-for exp_name in experiment_names:
-    print(f"\n--- Elaborazione configurazione: {exp_name} ---")
-    
-    # Cartella di output specifica per l'esperimento corrente
-    report_dir = os.path.join("reports", exp_name)
-    os.makedirs(report_dir, exist_ok=True)
-    
     qualities = [100, 90, 70, 50, 30, 10]
     q_accs = []
     val_samples = list(zip(val_paths, val_labels))
